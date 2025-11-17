@@ -173,6 +173,14 @@ PointRecord pr1 = new PointRecord(4.4f, 5.5f);
 PointRecord pr2 = pr1 with { X = 6.6f }; // 'with' expression to create a copy with modifications
 PointRecord pr3 = pr1 with { X = 8.5f, Y = 7.2f }; // Can do multiple properties with commas
 
+// Generics
+Pair<int, int> intPair = new Pair<int, int>(10, 5);
+Pair<string, string> strPair = new Pair<string, string>("Shawn", "Britty");
+var (firstInt, secondInt) = intPair; // This will work because we added a Deconstruct to Pair
+Console.WriteLine($"firstInt: {firstInt}, secondInt: {secondInt}");
+Tuple<int, int, int> intTuple = new Tuple<int, int, int>(1, 2, 3);
+Console.WriteLine(intTuple.ToString()); // Call the override ToString method
+
 enum Season
 {
     Winter,
@@ -380,3 +388,59 @@ public struct PairOfInts
 // *** RECORDS
 // Ultra-simplified syntax for immutable data objects
 public record PointRecord(float X, float Y);
+
+// *** GENERICS
+// This is a generic type that holds two values that don't need to be
+//  explicitly defined. So instead of making a "PairOfStrings", "PairOfInts",
+//  "PairOfBools" you can just make a "Pair" generic type that will work in place
+//  of all of the other classes...
+public class Pair<TFirst, TSecond>
+{
+    public TFirst First { get; }
+    public TSecond Second { get; }
+    public Pair(TFirst first, TSecond second)
+    {
+        First = first;
+        Second = second;
+    }
+
+    // Deconstruct:
+    // Could write it like this -
+    //public void Deconstruct(out TFirst first, out TSecond second) =>
+    //    (first, second) = (First, Second);
+    public void Deconstruct(out TFirst first, out TSecond second)
+    {
+        // Verbose:
+        //first = First;
+        //second = Second;
+        // Or succinct, with deconstruction
+        (first, second) = (First, Second);
+    }
+}
+
+// You can derive generic types from other generic types
+public class Tuple<TFirst, TSecond, TThird> : Pair<TFirst, TSecond>
+{
+    public TThird Third { get; }
+    public Tuple(TFirst first, TSecond second, TThird third): base(first, second)
+    {
+        Third = third;
+        // Or you could load base like this:
+        //base.First = first;
+        //base.Second = second;
+    }
+
+    // Deconstruct into three values: (first, second, third) = tuple;
+    public void Deconstruct(out TFirst first, out TSecond second, out TThird third)
+    {
+        first = First;
+        second = Second;
+        third = Third;
+    }
+
+    // Helpful debug representation
+    public override string ToString()
+    {
+        return $"({First}, {Second}, {Third})";
+    }
+}
