@@ -181,6 +181,35 @@ Console.WriteLine($"firstInt: {firstInt}, secondInt: {secondInt}");
 Tuple<int, int, int> intTuple = new Tuple<int, int, int>(1, 2, 3);
 Console.WriteLine(intTuple.ToString()); // Call the override ToString method
 
+// Default parameters
+Console.WriteLine($"Rolled die result: {RollDie().ToString()}");
+
+// Named arguments
+// Can pass the names with the params, for clarity, or in a different order
+Math.Clamp(value: 15, min: 0, max: 10); // value is 10 after clamping
+
+// Variable number of parameters
+int total = SumNumbers(1, 2, 3, 4, 5);
+Console.WriteLine($"Total sum: {total}");
+
+// Method with optional parameter
+int RollDie(int sides = 6)
+{
+    Random rand = new Random();
+    return rand.Next(sides) + 1; // Starts at index 0
+}
+
+// Variable number of parameters
+int SumNumbers(params int[] numbers) // Add params modifier to allow variable number of args
+{
+    int sum = 0;
+    foreach (int num in numbers)
+    {
+        sum += num;
+    }
+    return sum;
+}
+
 enum Season
 {
     Winter,
