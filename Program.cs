@@ -192,6 +192,46 @@ Math.Clamp(value: 15, min: 0, max: 10); // value is 10 after clamping
 int total = SumNumbers(1, 2, 3, 4, 5);
 Console.WriteLine($"Total sum: {total}");
 
+// *** PASS BY REFERENCE
+// Pass by reference
+// Because the parameter is ref, the method receives a reference to the
+//  caller's storage for the integer (not a copy).
+void DisplayNumberByRef(ref int x)
+{
+    Console.WriteLine($"DisplayNumberByRef: {x}");
+    // Modify the caller's variable since it was passed by reference
+    x += 10;
+}
+int yRef = 3;
+DisplayNumberByRef(ref yRef);
+Console.WriteLine($"yRef after DisplayNumber: {yRef}"); // yRef is now 13
+
+// Pass by value (default behavior)
+void DisplayNumber(int x)
+{
+    Console.WriteLine($"DisplayNumber: {x}");
+    x += 10; // This modifies only the local copy
+}
+int yVal = 3;
+DisplayNumber(yVal);
+Console.WriteLine($"yVal after DisplayNumber: {yVal}"); // yVal is still 3
+
+// *** OUTPUT PARAMETERS
+// Can output multiple values from a method using out parameters
+void SetupNumber(bool useBigNumber, out double value, out string valueString)
+{
+    value = useBigNumber ? 1_000_000 : 1;
+    valueString = value.ToString("N0"); // Format with commas
+}
+double xOutput;
+//string xOutputStr; // Don't need to declare these ahead of time in C# 7 and later
+SetupNumber(true, out xOutput, out string xOutputStr);
+Console.WriteLine($"xOutput: {xOutput}, xOutputStr: {xOutputStr}");
+
+// Extension Methods
+string sample = "Hello, World!";
+Console.WriteLine($"Reverse {sample} into {sample.ReverseString()}");
+
 // Method with optional parameter
 int RollDie(int sides = 6)
 {
@@ -477,5 +517,20 @@ public class Tuple<TFirst, TSecond, TThird> : Pair<TFirst, TSecond>
     public override string ToString()
     {
         return $"({First}, {Second}, {Third})";
+    }
+}
+
+// *** EXTENSION METHODS
+// Extension methods allow you to "add" methods to existing types
+public static class StringExtensions
+{
+    // This is an extension method for the string type
+    //  The "this" keyword before the first parameter indicates
+    //  that this is an extension method for that type
+    public static string ReverseString(this string str)
+    {
+        char[] charArray = str.ToCharArray();
+        Array.Reverse(charArray);
+        return new string(charArray);
     }
 }
