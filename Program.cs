@@ -223,6 +223,12 @@ class Score
     {
         Console.WriteLine($"{score.Name} scored {score.Points} in level {score.Level}.");
     }
+
+    // Can also do generic methods
+    public void GenericMethod<T>(T item)
+    {
+        Console.WriteLine($"Generic method called with item: {item}");
+    }
 }
 
 public class Rectangle
