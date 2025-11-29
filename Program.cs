@@ -232,6 +232,80 @@ Console.WriteLine($"xOutput: {xOutput}, xOutputStr: {xOutputStr}");
 string sample = "Hello, World!";
 Console.WriteLine($"Reverse {sample} into {sample.ReverseString()}");
 
+
+// *** EXCEPTIONS
+// Can catch multiple exceptions
+int number = 0;
+try
+{
+    number = Convert.ToInt32(response);
+}
+catch (FormatException e)
+{
+    number = -1;
+    Console.WriteLine("I don't understand...");
+}
+catch (OverflowException e)
+{
+    number = -1;
+    Console.WriteLine("That number is too large!");
+}
+finally
+{
+    // Finally runs no matter how you exit the try/catch block,
+    //  even if you return out of the try, or catch an exception...
+    Console.WriteLine("This will run no matter what");
+}
+
+try
+{
+    GetNumberFromUser();
+} catch (Exception)
+{
+    Console.WriteLine("An error occurred while getting the number from the user.");
+}
+
+// *** DELEGATES
+NumberDelegate addOneDelegate = new NumberDelegate(AddOne);
+int processedNumber = ProcessNumber(5, addOneDelegate);  // Can make a delegate variable
+int processedNumber2 = ProcessNumber(10, SubtractOne);  // Or pass method directly
+
+// *** EVENTS
+Spaceship ship = new Spaceship();
+Player player = new Player("Shawn", ship);
+ship.Explode();
+
+// *** LAMBDAS
+var numbers = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+int count = Count(numbers, n => n % 2 == 0);  // This uses a lambda expression to count even numbers
+Console.WriteLine($"There are {count} even numbers in the array.");
+// Lambda statement
+int countGreaterThanFive = Count(numbers, n =>
+{
+    if (n > 5)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+});
+Console.WriteLine($"There are {countGreaterThanFive} numbers greater than five in the array.");
+
+// Method that throws an error if a string is read in...
+int GetNumberFromUser()
+{
+    int number = 0;
+    while (number < 1 || number > 10)
+    {
+        Console.WriteLine("Enter a number between 1 and 10. ");
+        string? response = Console.ReadLine();
+        number = Convert.ToInt32(response);
+    }
+    return number;
+}
+
 // Method with optional parameter
 int RollDie(int sides = 6)
 {
@@ -250,6 +324,40 @@ int SumNumbers(params int[] numbers) // Add params modifier to allow variable nu
     return sum;
 }
 
+// Method to use a delegate
+int ProcessNumber(int number, NumberDelegate operation)
+{
+    // Can do some stuff in here with the delegate method, like you don't have to
+    //  just return it...
+    return operation(number);
+}
+
+// Function to use a lambda with
+int Count(int[] input, Func<int, bool> countFunction)
+{
+    int count = 0;
+    foreach (int item in input)
+    {
+        if (countFunction(item))
+        {
+            count++;
+        }
+    }
+    return count;
+}
+
+// *** DELEGATES
+int AddOne(int number) => number + 1;
+int SubtractOne(int number) => number - 1;
+int Double(int number) => number * 2;
+// A delegate is a type that represents references to methods
+//  with a particular parameter list and return type
+// Variables that use a delegate type can store methods!
+// A variables whose type is NumberDelegate can point to any method with an int
+//  parameter and an int return type
+public delegate int NumberDelegate(int number); // Define a delegate type
+// Action and Func are built-in delegate types
+
 enum Season
 {
     Winter,
@@ -257,6 +365,39 @@ enum Season
     Summer,
     Fall
 };
+
+// Define a class with an event
+class Spaceship
+{
+    // Can define a parameter by using a delegate type
+    public event Action<Point>? ShipExploded;
+    public Point Location { get; private set; } = new Point(0, 0);
+
+    public void Explode()
+    {
+        // Trigger the event
+        ShipExploded?.Invoke(Location);
+        // Or just ShipExploded();
+    }
+}
+
+// Define a class that subscribes to the event
+class Player {
+    public string Name { get; set; }
+ 
+    public Player(string name, Spaceship ship)
+    {
+        Name = name;
+        ship.ShipExploded += OnShipExploded; // Subscribe to the event
+
+    }
+
+    // Now this gets called when the event is triggered
+    public void OnShipExploded(Point location)
+    {
+        Console.WriteLine($"{Name}'s ship has exploded at ({location.X}, {location.Y})!");
+    }
+}
 
 class Score
 {
